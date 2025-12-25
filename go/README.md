@@ -124,7 +124,7 @@ go test ./...
 ```bash
 make bench
 # or
-go test -bench=. -benchmem ./benchmarks
+go test -bench=. -benchmem ./internal/benchmarks
 ```
 
 - Run SLA validation tests:
@@ -132,7 +132,7 @@ go test -bench=. -benchmem ./benchmarks
 ```bash
 make bench-sla
 # or
-go test -run=TestBenchmarkSLAs -v ./benchmarks
+go test -run=TestBenchmarkSLAs -v ./internal/benchmarks
 ```
 
 - Format & vet:
