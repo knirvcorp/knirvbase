@@ -7,9 +7,9 @@ import (
 	"os"
 	"path/filepath"
 
-	qry "github.com/knirv/knirvbase/internal/query"
-	typ "github.com/knirv/knirvbase/internal/types"
-	"github.com/knirv/knirvbase/pkg/knirvbase"
+	qry "github.com/knirvcorp/knirvbase/go/internal/query"
+	typ "github.com/knirvcorp/knirvbase/go/internal/types"
+	"github.com/knirvcorp/knirvbase/go/pkg/knirvbase"
 )
 
 func main() {

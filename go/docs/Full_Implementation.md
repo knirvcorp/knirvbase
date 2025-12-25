@@ -59,7 +59,7 @@ Example usage snippet (for `pkg/knirvbase`):
 ```go
 import (
   "context"
-  kb "github.com/knirv/knirvbase/pkg/knirvbase"
+  kb "github.com/knirvcorp/knirvbase/go/pkg/knirvbase"
 )
 
 func Example() {

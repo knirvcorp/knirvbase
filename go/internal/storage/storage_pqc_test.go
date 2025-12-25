@@ -1,4 +1,4 @@
-package distributed
+package storage
 
 import (
 	"encoding/json"
@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/knirv/knirvbase/internal/crypto/pqc"
+	"github.com/knirvcorp/knirvbase/go/internal/crypto/pqc"
 )
 
 func TestFileStorage_PQCEncryption(t *testing.T) {

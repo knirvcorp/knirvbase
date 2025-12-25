@@ -5,10 +5,10 @@ import (
 	"errors"
 	"sync"
 
-	coll "github.com/knirv/knirvbase/internal/collection"
-	netpkg "github.com/knirv/knirvbase/internal/network"
-	stor "github.com/knirv/knirvbase/internal/storage"
-	typ "github.com/knirv/knirvbase/internal/types"
+	coll "github.com/knirv/knirvbase/go/internal/collection"
+	netpkg "github.com/knirv/knirvbase/go/internal/network"
+	stor "github.com/knirv/knirvbase/go/internal/storage"
+	typ "github.com/knirv/knirvbase/go/internal/types"
 )
 
 type DistributedDbOptions struct {

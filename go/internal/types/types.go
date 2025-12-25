@@ -3,7 +3,7 @@ package types
 import (
 	"time"
 
-	"github.com/knirv/knirvbase/internal/clock"
+	"github.com/knirvcorp/knirvbase/go/internal/clock"
 )
 
 // EntryType specifies the kind of data stored.

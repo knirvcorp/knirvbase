@@ -3,8 +3,8 @@ package resolver
 import (
 	"time"
 
-	"github.com/knirv/knirvbase/internal/clock"
-	"github.com/knirv/knirvbase/internal/types"
+	"github.com/knirvcorp/knirvbase/go/internal/clock"
+	"github.com/knirvcorp/knirvbase/go/internal/types"
 )
 
 // ResolveConflict applies LWW + vector-clock tie-breaking

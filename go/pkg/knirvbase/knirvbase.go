@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 
-	coll "github.com/knirv/knirvbase/internal/collection"
-	db "github.com/knirv/knirvbase/internal/database"
-	stor "github.com/knirv/knirvbase/internal/storage"
-	typ "github.com/knirv/knirvbase/internal/types"
+	coll "github.com/knirvcorp/knirvbase/go/internal/collection"
+	db "github.com/knirvcorp/knirvbase/go/internal/database"
+	stor "github.com/knirvcorp/knirvbase/go/internal/storage"
+	typ "github.com/knirvcorp/knirvbase/go/internal/types"
 )
 
 // Options contains configuration for the library

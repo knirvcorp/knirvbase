@@ -1,4 +1,4 @@
-module github.com/knirv/knirvbase
+module github.com/knirvcorp/knirvbase/go
 
 go 1.24.6
 

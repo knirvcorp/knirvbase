@@ -1,4 +1,4 @@
-package distributed
+package collection
 
 import (
 	"context"
@@ -8,11 +8,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/knirv/knirvbase/internal/clock"
-	netpkg "github.com/knirv/knirvbase/internal/network"
-	resolver "github.com/knirv/knirvbase/internal/resolver"
-	stor "github.com/knirv/knirvbase/internal/storage"
-	typ "github.com/knirv/knirvbase/internal/types"
+	"github.com/knirvcorp/knirvbase/go/internal/clock"
+	netpkg "github.com/knirvcorp/knirvbase/go/internal/network"
+	resolver "github.com/knirvcorp/knirvbase/go/internal/resolver"
+	stor "github.com/knirvcorp/knirvbase/go/internal/storage"
+	typ "github.com/knirvcorp/knirvbase/go/internal/types"
 )
 
 // A minimal in-memory local collection implementation to keep the example self-contained

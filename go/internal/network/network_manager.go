@@ -1,4 +1,4 @@
-package distributed
+package network
 
 import (
 	"bufio"
@@ -15,7 +15,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/knirv/knirvbase/internal/types"
+	"github.com/knirvcorp/knirvbase/go/internal/types"
 )
 
 // MessageHandler receives a ProtocolMessage

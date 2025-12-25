@@ -641,7 +641,7 @@ go test -bench=. -benchtime=10s -cpu=8
 **Installation Steps:**
 ```bash
 # 1. Clone repositories
-git clone https://github.com/knirv/knirvbase.git
+git clone https://github.com/knirvcorp/knirvbase/go.git
 git clone https://github.com/guiperry/asic-shield.git
 
 # 2. Build KNIRVBASE
@@ -651,7 +651,7 @@ sudo cp bin/knirvbase /usr/local/bin/
 
 # 3. Build ASIC-Shield (with KNIRVBASE)
 cd ../../asic-shield
-go mod edit -replace github.com/knirv/knirvbase=../knirvbase/go
+go mod edit -replace github.com/knirvcorp/knirvbase/go=../knirvbase/go
 make build
 
 # 4. Configure ASIC-Shield

@@ -5,8 +5,8 @@ import (
 	"os"
 	"testing"
 
-	dbpkg "github.com/knirv/knirvbase/internal/database"
-	stor "github.com/knirv/knirvbase/internal/storage"
+	dbpkg "github.com/knirvcorp/knirvbase/go/internal/database"
+	stor "github.com/knirvcorp/knirvbase/go/internal/storage"
 )
 
 func TestKNIRVQLIndexCommands(t *testing.T) {

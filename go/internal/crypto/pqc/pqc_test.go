@@ -3,7 +3,7 @@ package pqc_test
 import (
 	"testing"
 
-	"github.com/knirv/knirvbase/internal/crypto/pqc"
+	"github.com/knirvcorp/knirvbase/go/internal/crypto/pqc"
 )
 
 func TestKyberEncryptDecrypt(t *testing.T) {

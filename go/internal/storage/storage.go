@@ -1,4 +1,4 @@
-package distributed
+package storage
 
 import (
 	"encoding/json"
@@ -8,8 +8,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/knirv/knirvbase/internal/crypto/pqc"
-	"github.com/knirv/knirvbase/internal/types"
+	"github.com/knirvcorp/knirvbase/go/internal/crypto/pqc"
+	"github.com/knirvcorp/knirvbase/go/internal/types"
 )
 
 // Storage interface for persistence

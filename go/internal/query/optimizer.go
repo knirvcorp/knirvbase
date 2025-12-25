@@ -4,7 +4,7 @@ import (
 	"math"
 	"sort"
 
-	stor "github.com/knirv/knirvbase/internal/storage"
+	stor "github.com/knirvcorp/knirvbase/go/internal/storage"
 )
 
 // QueryPlan represents an optimized execution plan for a query
