@@ -1,0 +1,9 @@
+/home/gperry/Documents/GitHub/KNIRV/KNIRV_NETWORK/KNIRVBASE/rust/target/debug/deps/liblibp2p_websocket-fae0af198bd10bad.rmeta: /home/gperry/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libp2p-websocket-0.43.2/src/lib.rs /home/gperry/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libp2p-websocket-0.43.2/src/error.rs /home/gperry/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libp2p-websocket-0.43.2/src/framed.rs /home/gperry/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libp2p-websocket-0.43.2/src/quicksink.rs /home/gperry/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libp2p-websocket-0.43.2/src/tls.rs
+
+/home/gperry/Documents/GitHub/KNIRV/KNIRV_NETWORK/KNIRVBASE/rust/target/debug/deps/libp2p_websocket-fae0af198bd10bad.d: /home/gperry/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libp2p-websocket-0.43.2/src/lib.rs /home/gperry/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libp2p-websocket-0.43.2/src/error.rs /home/gperry/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libp2p-websocket-0.43.2/src/framed.rs /home/gperry/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libp2p-websocket-0.43.2/src/quicksink.rs /home/gperry/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libp2p-websocket-0.43.2/src/tls.rs
+
+/home/gperry/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libp2p-websocket-0.43.2/src/lib.rs:
+/home/gperry/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libp2p-websocket-0.43.2/src/error.rs:
+/home/gperry/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libp2p-websocket-0.43.2/src/framed.rs:
+/home/gperry/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libp2p-websocket-0.43.2/src/quicksink.rs:
+/home/gperry/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libp2p-websocket-0.43.2/src/tls.rs:

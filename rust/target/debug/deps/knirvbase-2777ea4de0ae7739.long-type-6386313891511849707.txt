@@ -1,0 +1,1 @@
+Pin<Box<(dyn futures::Future<Output = Result<i32, Box<(dyn StdError + 'static)>>> + std::marker::Send + 'async_trait)>>

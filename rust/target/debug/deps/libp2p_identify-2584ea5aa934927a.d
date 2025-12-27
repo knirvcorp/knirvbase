@@ -1,0 +1,12 @@
+/home/gperry/Documents/GitHub/KNIRV/KNIRV_NETWORK/KNIRVBASE/rust/target/debug/deps/liblibp2p_identify-2584ea5aa934927a.rmeta: /home/gperry/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libp2p-identify-0.44.2/src/lib.rs /home/gperry/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libp2p-identify-0.44.2/src/behaviour.rs /home/gperry/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libp2p-identify-0.44.2/src/handler.rs /home/gperry/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libp2p-identify-0.44.2/src/protocol.rs /home/gperry/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libp2p-identify-0.44.2/src/generated/mod.rs /home/gperry/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libp2p-identify-0.44.2/src/generated/structs.rs
+
+/home/gperry/Documents/GitHub/KNIRV/KNIRV_NETWORK/KNIRVBASE/rust/target/debug/deps/libp2p_identify-2584ea5aa934927a.d: /home/gperry/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libp2p-identify-0.44.2/src/lib.rs /home/gperry/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libp2p-identify-0.44.2/src/behaviour.rs /home/gperry/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libp2p-identify-0.44.2/src/handler.rs /home/gperry/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libp2p-identify-0.44.2/src/protocol.rs /home/gperry/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libp2p-identify-0.44.2/src/generated/mod.rs /home/gperry/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libp2p-identify-0.44.2/src/generated/structs.rs
+
+/home/gperry/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libp2p-identify-0.44.2/src/lib.rs:
+/home/gperry/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libp2p-identify-0.44.2/src/behaviour.rs:
+/home/gperry/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libp2p-identify-0.44.2/src/handler.rs:
+/home/gperry/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libp2p-identify-0.44.2/src/protocol.rs:
+/home/gperry/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libp2p-identify-0.44.2/src/generated/mod.rs:
+/home/gperry/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libp2p-identify-0.44.2/src/generated/structs.rs:
+
+# env-dep:CARGO_PKG_VERSION=0.44.2

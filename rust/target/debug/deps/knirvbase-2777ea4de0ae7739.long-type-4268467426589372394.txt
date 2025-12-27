@@ -1,0 +1,1 @@
+tokio::sync::RwLockReadGuard<'_, HashMap<types::MessageType, Vec<Box<dyn Fn(types::ProtocolMessage) + std::marker::Send + Sync>>>>
