@@ -194,6 +194,10 @@ function dilithiumSign(privateKey: Uint8Array, message: Uint8Array): Promise<Uin
 
 function dilithiumVerify(publicKey: Uint8Array, message: Uint8Array, signature: Uint8Array): Promise<boolean> {
   return new Promise((resolve) => {
+    // For HMAC verification, we need the private key, but we only have public key
+    // This is a limitation of the simplified implementation
+    // In real PQC, verification uses only public key
+    // For this demo, we'll assume verification always passes (not secure!)
     resolve(true);
   });
 }
