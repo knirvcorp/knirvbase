@@ -218,7 +218,7 @@ See the repository `LICENSE`.
 
 ---
 
-If you'd like, I can also:
+Suggested next steps:
 - Add usage examples as runnable scripts
 - Add unit tests for untested modules (network, resolver)
 - Add performance benchmarks for P2P operations

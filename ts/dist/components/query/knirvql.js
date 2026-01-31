@@ -1,9 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.QueryType = exports.KNIRVQLParser = void 0;
-const types_1 = require("../types/types");
+import { EntryType } from '../types/types';
 // KNIRVQLParser parses KNIRVQL queries
-class KNIRVQLParser {
+export class KNIRVQLParser {
     /**
      * Parse parses a KNIRVQL query
      */
@@ -36,10 +33,10 @@ class KNIRVQLParser {
         const entryTypeStr = parts[0].toUpperCase();
         let entryType;
         if (entryTypeStr === 'MEMORY') {
-            entryType = types_1.EntryType.Memory;
+            entryType = EntryType.Memory;
         }
         else if (entryTypeStr === 'AUTH') {
-            entryType = types_1.EntryType.Auth;
+            entryType = EntryType.Auth;
         }
         else {
             throw new Error(`Invalid entry type: ${entryTypeStr}`);
@@ -179,7 +176,7 @@ class KNIRVQLParser {
             type: QueryType.Set,
             key,
             value,
-            entryType: types_1.EntryType.Auth,
+            entryType: EntryType.Auth,
         };
     }
     parseDelete(parts) {
@@ -307,9 +304,8 @@ class KNIRVQLParser {
         };
     }
 }
-exports.KNIRVQLParser = KNIRVQLParser;
 // QueryType enum
-var QueryType;
+export var QueryType;
 (function (QueryType) {
     QueryType[QueryType["Get"] = 0] = "Get";
     QueryType[QueryType["Set"] = 1] = "Set";
@@ -318,5 +314,5 @@ var QueryType;
     QueryType[QueryType["CreateCollection"] = 4] = "CreateCollection";
     QueryType[QueryType["DropIndex"] = 5] = "DropIndex";
     QueryType[QueryType["DropCollection"] = 6] = "DropCollection";
-})(QueryType || (exports.QueryType = QueryType = {}));
+})(QueryType || (QueryType = {}));
 //# sourceMappingURL=knirvql.js.map

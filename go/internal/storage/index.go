@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"sort"
 	"strings"
 	"sync"
+
+	"github.com/google/uuid"
+	"github.com/knirvcorp/knirvbase/go/internal/indexing"
 )
 
 // IndexType represents the type of index
@@ -49,9 +51,8 @@ type GINIndex struct {
 
 // HNSWIndex for Hierarchical Navigable Small World (vectors)
 type HNSWIndex struct {
-	dimensions int
-	vectors    map[string][]float64 // documentID -> vector
-	neighbors  map[string][]string  // documentID -> []neighborIDs
+	index *indexing.HNSWIndex // reference to the actual HNSW index implementation
+	vectors map[string][]float32 // documentID -> vector for fast lookup
 }
 
 // IndexManager manages all indexes for a storage backend
@@ -100,11 +101,24 @@ func (im *IndexManager) CreateIndex(collection, name string, indexType IndexType
 		dim := 768 // default
 		if d, ok := options["dimensions"].(float64); ok {
 			dim = int(d)
+		} else if d, ok := options["dimensions"].(int); ok {
+			dim = d
+		}
+		m := 16 // default
+		if mOpt, ok := options["m"].(float64); ok {
+			m = int(mOpt)
+		} else if mOpt, ok := options["m"].(int); ok {
+			m = mOpt
+		}
+		efConstruction := 200 // default
+		if efOpt, ok := options["ef_construction"].(float64); ok {
+			efConstruction = int(efOpt)
+		} else if efOpt, ok := options["ef_construction"].(int); ok {
+			efConstruction = efOpt
 		}
 		index.hnswIndex = &HNSWIndex{
-			dimensions: dim,
-			vectors:    make(map[string][]float64),
-			neighbors:  make(map[string][]string),
+			index: indexing.NewHNSWIndex(dim, m, efConstruction),
+			vectors: make(map[string][]float32),
 		}
 	}
 
@@ -335,7 +349,7 @@ func (im *IndexManager) queryGIN(idx *Index, query map[string]interface{}) ([]st
 	return []string{}, nil
 }
 
-// HNSW index operations (simplified)
+// HNSW index operations
 func (im *IndexManager) insertHNSW(idx *Index, docID string, doc map[string]interface{}) {
 	idx.mu.Lock()
 	defer idx.mu.Unlock()
@@ -343,15 +357,15 @@ func (im *IndexManager) insertHNSW(idx *Index, docID string, doc map[string]inte
 	// Extract vector from document
 	if payload, ok := doc["payload"].(map[string]interface{}); ok {
 		if vector, ok := payload["vector"].([]interface{}); ok {
-			vec := make([]float64, len(vector))
+			vec := make([]float32, len(vector))
 			for i, v := range vector {
 				if f, ok := v.(float64); ok {
-					vec[i] = f
+					vec[i] = float32(f)
 				}
 			}
 			idx.hnswIndex.vectors[docID] = vec
-			// Simplified: add to neighbors (in practice, use proper HNSW algorithm)
-			idx.hnswIndex.neighbors[docID] = []string{}
+			// Add to HNSW index
+			idx.hnswIndex.index.Add(uuid.MustParse(docID), vec)
 		}
 	}
 }
@@ -361,7 +375,8 @@ func (im *IndexManager) deleteHNSW(idx *Index, docID string) {
 	defer idx.mu.Unlock()
 
 	delete(idx.hnswIndex.vectors, docID)
-	delete(idx.hnswIndex.neighbors, docID)
+	// Remove from HNSW index
+	idx.hnswIndex.index.Remove(uuid.MustParse(docID))
 }
 
 func (im *IndexManager) queryHNSW(idx *Index, query map[string]interface{}) ([]string, error) {
@@ -369,35 +384,28 @@ func (im *IndexManager) queryHNSW(idx *Index, query map[string]interface{}) ([]s
 	defer idx.mu.RUnlock()
 
 	if queryVec, ok := query["vector"].([]float64); ok {
-		// Simplified cosine similarity search
-		type scoredDoc struct {
-			id    string
-			score float64
+		// Convert to float32
+		queryVec32 := make([]float32, len(queryVec))
+		for i, v := range queryVec {
+			queryVec32[i] = float32(v)
 		}
 
-		var results []scoredDoc
-		for docID, vec := range idx.hnswIndex.vectors {
-			score := cosineSimilarity(queryVec, vec)
-			results = append(results, scoredDoc{id: docID, score: score})
-		}
-
-		// Sort by score descending
-		sort.Slice(results, func(i, j int) bool {
-			return results[i].score > results[j].score
-		})
-
-		// Return top results
+		// Use HNSW index for search
 		limit := 10
 		if l, ok := query["limit"].(int); ok {
 			limit = l
 		}
 
+		// Search the HNSW index
+		neighborIDs, err := idx.hnswIndex.index.Search(queryVec32, limit)
+		if err != nil {
+			return nil, err
+		}
+
+		// Convert uuid.UUID to string
 		var docIDs []string
-		for i, result := range results {
-			if i >= limit {
-				break
-			}
-			docIDs = append(docIDs, result.id)
+		for _, id := range neighborIDs {
+			docIDs = append(docIDs, id.String())
 		}
 
 		return docIDs, nil
@@ -441,7 +449,8 @@ func (im *IndexManager) tokenizeValue(val interface{}, tokens *[]string) {
 	}
 }
 
-func cosineSimilarity(a, b []float64) float64 {
+// CosineSimilarity computes the cosine similarity between two vectors
+func CosineSimilarity(a, b []float64) float64 {
 	if len(a) != len(b) {
 		return 0
 	}
@@ -531,10 +540,17 @@ func (im *IndexManager) LoadIndexes() error {
 				if d, ok := idx.Options["dimensions"].(float64); ok {
 					dim = int(d)
 				}
+				m := 16
+				if mOpt, ok := idx.Options["m"].(float64); ok {
+					m = int(mOpt)
+				}
+				efConstruction := 200
+				if efOpt, ok := idx.Options["ef_construction"].(float64); ok {
+					efConstruction = int(efOpt)
+				}
 				idx.hnswIndex = &HNSWIndex{
-					dimensions: dim,
-					vectors:    make(map[string][]float64),
-					neighbors:  make(map[string][]string),
+					index: indexing.NewHNSWIndex(dim, m, efConstruction),
+					vectors: make(map[string][]float32),
 				}
 			}
 

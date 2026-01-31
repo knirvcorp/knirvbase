@@ -275,6 +275,55 @@ func (fs *FileStorage) QueryIndex(collection, indexName string, query map[string
 	return fs.indexManager.QueryIndex(collection, indexName, query)
 }
 
+// Get retrieves a value by key - implements embedding.Storage interface
+func (fs *FileStorage) Get(key []byte) ([]byte, error) {
+	keyStr := string(key)
+	path := filepath.Join(fs.baseDir, "kv", keyStr)
+
+	data, err := os.ReadFile(path)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil, fmt.Errorf("key not found: %s", keyStr)
+		}
+		return nil, err
+	}
+
+	return data, nil
+}
+
+// Put stores a value by key - implements embedding.Storage interface
+func (fs *FileStorage) Put(key, value []byte) error {
+	keyStr := string(key)
+	kvDir := filepath.Join(fs.baseDir, "kv")
+	os.MkdirAll(kvDir, 0755)
+
+	path := filepath.Join(kvDir, keyStr)
+	return os.WriteFile(path, value, 0644)
+}
+
+// Has checks if a key exists - implements embedding.Storage interface
+func (fs *FileStorage) Has(key []byte) (bool, error) {
+	keyStr := string(key)
+	path := filepath.Join(fs.baseDir, "kv", keyStr)
+
+	_, err := os.Stat(path)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return false, nil
+		}
+		return false, err
+	}
+
+	return true, nil
+}
+
+// Close closes the storage and cleans up resources
+func (fs *FileStorage) Close() error {
+	// FileStorage doesn't have explicit resources to close
+	// but we implement this for compatibility
+	return nil
+}
+
 // deepCopyDoc creates a deep copy of a document
 func (fs *FileStorage) deepCopyDoc(doc map[string]interface{}) map[string]interface{} {
 	data, _ := json.Marshal(doc)

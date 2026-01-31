@@ -1,68 +1,29 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.IndexManager = exports.Index = exports.HNSWIndex = exports.GINIndex = exports.BTreeIndex = exports.IndexType = void 0;
-const fs = __importStar(require("fs"));
-const path = __importStar(require("path"));
-var IndexType;
+import * as fs from 'fs';
+import * as path from 'path';
+export var IndexType;
 (function (IndexType) {
     IndexType["BTree"] = "btree";
     IndexType["GIN"] = "gin";
     IndexType["HNSW"] = "hnsw";
-})(IndexType || (exports.IndexType = IndexType = {}));
-class BTreeIndex {
+})(IndexType || (IndexType = {}));
+export class BTreeIndex {
     constructor() {
         this.data = new Map(); // value -> []documentID
     }
 }
-exports.BTreeIndex = BTreeIndex;
-class GINIndex {
+export class GINIndex {
     constructor() {
         this.data = new Map(); // token -> []documentID
     }
 }
-exports.GINIndex = GINIndex;
-class HNSWIndex {
+export class HNSWIndex {
     constructor(dimensions) {
         this.vectors = new Map(); // documentID -> vector
         this.neighbors = new Map(); // documentID -> []neighborIDs
         this.dimensions = dimensions;
     }
 }
-exports.HNSWIndex = HNSWIndex;
-class Index {
+export class Index {
     constructor(name, collection, type, fields, unique, partialExpr, options) {
         this.name = name;
         this.collection = collection;
@@ -85,8 +46,7 @@ class Index {
         }
     }
 }
-exports.Index = Index;
-class IndexManager {
+export class IndexManager {
     constructor(baseDir) {
         this.indexes = new Map();
         this.baseDir = baseDir;
@@ -371,5 +331,4 @@ class IndexManager {
         fs.writeFileSync(metaPath, data, 'utf8');
     }
 }
-exports.IndexManager = IndexManager;
 //# sourceMappingURL=index.js.map

@@ -1,49 +1,31 @@
-"use strict";
 // Main library exports for KNIRVBASE
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __exportStar = (this && this.__exportStar) || function(m, exports) {
-    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.DB = void 0;
-exports.New = New;
 // Core types
-__exportStar(require("../components/types/types"), exports);
+export * from '../components/types/types';
 // Clock
-__exportStar(require("../components/clock/vector_clock"), exports);
+export * from '../components/clock/vector_clock';
 // Collection
-__exportStar(require("../components/collection/distributed_collection"), exports);
+export * from '../components/collection/distributed_collection';
 // Network
-__exportStar(require("../components/network/network_manager"), exports);
+export * from '../components/network/network_manager';
 // Storage
-__exportStar(require("../components/storage/storage"), exports);
-__exportStar(require("../components/storage/index"), exports);
+export * from '../components/storage/storage';
+export * from '../components/storage/index';
 // Resolver
-__exportStar(require("../components/resolver/crdt_resolver"), exports);
+export * from '../components/resolver/crdt_resolver';
 // Crypto
-__exportStar(require("../components/crypto/pqc/keys"), exports);
-__exportStar(require("../components/crypto/pqc/encryption"), exports);
+export * from '../components/crypto/pqc/keys';
+export * from '../components/crypto/pqc/encryption';
 // Query
-__exportStar(require("../components/query/index"), exports);
+export * from '../components/query/index';
 // Main Database class
-const network_manager_1 = require("../components/network/network_manager");
-const storage_1 = require("../components/storage/storage");
-const distributed_collection_1 = require("../components/collection/distributed_collection");
-class DB {
+import { NetworkManager } from '../components/network/network_manager';
+import { FileStorage } from '../components/storage/storage';
+import { DistributedCollection } from '../components/collection/distributed_collection';
+export class DB {
     constructor(options) {
         this.collections = new Map();
-        this.store = new storage_1.FileStorage(options.dataDir);
-        this.network = new network_manager_1.NetworkManager();
+        this.store = new FileStorage(options.dataDir);
+        this.network = new NetworkManager();
         // Initialize network if distributed
         if (options.distributedEnabled) {
             // TODO: Initialize distributed database
@@ -65,7 +47,7 @@ class DB {
         if (this.collections.has(name)) {
             return new CollectionAdapter(this.collections.get(name));
         }
-        const coll = new distributed_collection_1.DistributedCollection(name, this.network, this.store);
+        const coll = new DistributedCollection(name, this.network, this.store);
         this.collections.set(name, coll);
         return new CollectionAdapter(coll);
     }
@@ -73,7 +55,6 @@ class DB {
         await this.network.shutdown();
     }
 }
-exports.DB = DB;
 class CollectionAdapter {
     constructor(coll) {
         this.coll = coll;
@@ -104,7 +85,7 @@ class CollectionAdapter {
     }
 }
 // Factory function
-async function New(ctx, opts) {
+export async function New(ctx, opts) {
     const db = new DB(opts);
     await db.initialize();
     return db;

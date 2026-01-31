@@ -14,6 +14,21 @@ const (
 	EntryTypeAuth   EntryType = "AUTH"
 )
 
+// MemoryCategory specifies the category of memory entries
+type MemoryCategory string
+
+const (
+	MemoryCategoryError      MemoryCategory = "ERROR"
+	MemoryCategoryContext    MemoryCategory = "CONTEXT"
+	MemoryCategoryIdea       MemoryCategory = "IDEA"
+	MemoryCategorySolution   MemoryCategory = "SOLUTION"
+	MemoryCategorySkill      MemoryCategory = "SKILL"
+	MemoryCategoryGeneric    MemoryCategory = "GENERIC"
+	MemoryCategoryEvent      MemoryCategory = "EVENT"
+	MemoryCategoryPreference MemoryCategory = "PREFERENCE"
+	MemoryCategoryTrait      MemoryCategory = "TRAIT"
+)
+
 // DistributedDocument augments a document with CRDT metadata
 type DistributedDocument struct {
 	ID        string                 `json:"id"`

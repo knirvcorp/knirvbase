@@ -1,22 +1,13 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ComparisonResult = void 0;
-exports.increment = increment;
-exports.merge = merge;
-exports.compare = compare;
-exports.happensBefore = happensBefore;
-exports.newVectorClock = newVectorClock;
-exports.clone = clone;
 // ComparisonResult is the relationship between two vector clocks
-var ComparisonResult;
+export var ComparisonResult;
 (function (ComparisonResult) {
     ComparisonResult[ComparisonResult["Equal"] = 0] = "Equal";
     ComparisonResult[ComparisonResult["Before"] = 1] = "Before";
     ComparisonResult[ComparisonResult["After"] = 2] = "After";
     ComparisonResult[ComparisonResult["Concurrent"] = 3] = "Concurrent";
-})(ComparisonResult || (exports.ComparisonResult = ComparisonResult = {}));
+})(ComparisonResult || (ComparisonResult = {}));
 // Increment increments a peer counter on the vector clock
-function increment(clock, peerID) {
+export function increment(clock, peerID) {
     if (!clock) {
         clock = {};
     }
@@ -24,7 +15,7 @@ function increment(clock, peerID) {
     return clock;
 }
 // Merge two vector clocks (take max per peer)
-function merge(clock1, clock2) {
+export function merge(clock1, clock2) {
     const merged = {};
     for (const k in clock1) {
         merged[k] = clock1[k];
@@ -37,7 +28,7 @@ function merge(clock1, clock2) {
     return merged;
 }
 // Compare returns Equal|Before|After|Concurrent
-function compare(clock1, clock2) {
+export function compare(clock1, clock2) {
     let hasGreater = false;
     let hasLess = false;
     const allKeys = new Set([...Object.keys(clock1), ...Object.keys(clock2)]);
@@ -65,16 +56,16 @@ function compare(clock1, clock2) {
     }
 }
 // HappensBefore returns true if clock1 is before or equal to clock2
-function happensBefore(clock1, clock2) {
+export function happensBefore(clock1, clock2) {
     const cmp = compare(clock1, clock2);
     return cmp === ComparisonResult.Before || cmp === ComparisonResult.Equal;
 }
 // NewVectorClock returns an empty clock
-function newVectorClock() {
+export function newVectorClock() {
     return {};
 }
 // Clone returns a shallow copy
-function clone(clock) {
+export function clone(clock) {
     if (!clock) {
         return {};
     }

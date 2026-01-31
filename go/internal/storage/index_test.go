@@ -141,16 +141,19 @@ func TestHNSWIndex(t *testing.T) {
 		t.Fatalf("Failed to create HNSW index: %v", err)
 	}
 
-	// Insert documents with vectors
+	// Insert documents with vectors using UUIDs as IDs
+	id1 := "550e8400-e29b-41d4-a716-446655440000"
+	id2 := "550e8400-e29b-41d4-a716-446655440001"
+
 	doc1 := map[string]interface{}{
-		"id": "vec1",
+		"id": id1,
 		"payload": map[string]interface{}{
 			"vector": []interface{}{0.1, 0.2, 0.3},
 		},
 	}
 
 	doc2 := map[string]interface{}{
-		"id": "vec2",
+		"id": id2,
 		"payload": map[string]interface{}{
 			"vector": []interface{}{0.4, 0.5, 0.6},
 		},
@@ -180,7 +183,7 @@ func TestHNSWIndex(t *testing.T) {
 	}
 
 	// vec1 should be most similar to itself
-	if results[0] != "vec1" {
+	if results[0] != id1 {
 		t.Logf("Results: %v", results) // Log for debugging
 	}
 }

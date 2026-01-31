@@ -1,3 +1,6 @@
-export { KNIRVQLParser, Query, QueryType, Filter, QueryResult, QueryExecutor } from './knirvql';
-export { QueryOptimizer, QueryPlan, ScanType, CollectionStats, IndexStats } from './optimizer';
+export { KNIRVQLParser } from './knirvql';
+export type { Query, QueryType, Filter, QueryResult } from './knirvql';
+export type { QueryExecutor } from './knirvql';
+export { QueryOptimizer } from './optimizer';
+export type { QueryPlan, ScanType, CollectionStats, IndexStats } from './optimizer';
 //# sourceMappingURL=index.d.ts.map

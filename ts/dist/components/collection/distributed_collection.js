@@ -1,11 +1,8 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.DistributedCollection = exports.LocalCollection = void 0;
-const vector_clock_1 = require("../clock/vector_clock");
-const types_1 = require("../types/types");
-const crdt_resolver_1 = require("../resolver/crdt_resolver");
+import { increment, merge } from '../clock/vector_clock';
+import { OperationType, MessageType, EntryType } from '../types/types';
+import { ToDistributed, ToRegular, ApplyOperation } from '../resolver/crdt_resolver';
 // A minimal in-memory local collection implementation to keep the example self-contained
-class LocalCollection {
+export class LocalCollection {
     constructor(name, store) {
         this.name = name;
         this.store = store;
@@ -63,9 +60,8 @@ class LocalCollection {
         return out;
     }
 }
-exports.LocalCollection = LocalCollection;
 // DistributedCollection manages local storage plus network synchronization
-class DistributedCollection {
+export class DistributedCollection {
     constructor(name, network, store) {
         this.networkID = '';
         this.syncStates = new Map();
@@ -77,7 +73,7 @@ class DistributedCollection {
         this.setupMessageHandlers();
     }
     setupMessageHandlers() {
-        this.network.onMessage(types_1.MessageType.Operation, (msg) => {
+        this.network.onMessage(MessageType.Operation, (msg) => {
             // Basic payload validation
             const payload = msg.payload;
             if (!payload)
@@ -90,7 +86,7 @@ class DistributedCollection {
             const op = opMap; // Simplified
             this.handleRemoteOperation(op);
         });
-        this.network.onMessage(types_1.MessageType.SyncRequest, (msg) => {
+        this.network.onMessage(MessageType.SyncRequest, (msg) => {
             const payload = msg.payload;
             if (!payload)
                 return;
@@ -99,7 +95,7 @@ class DistributedCollection {
                 return;
             this.handleSyncRequest(msg);
         });
-        this.network.onMessage(types_1.MessageType.SyncResponse, (msg) => {
+        this.network.onMessage(MessageType.SyncResponse, (msg) => {
             const payload = msg.payload;
             if (!payload)
                 return;
@@ -141,7 +137,7 @@ class DistributedCollection {
         }
         const entryType = doc.entryType; // Assuming validation already happened
         // For MEMORY entries, blob is handled by storage
-        if (entryType === types_1.EntryType.Memory) {
+        if (entryType === EntryType.Memory) {
             const payload = doc.payload;
             if (payload && 'blob' in payload) {
                 // Blob will be saved by storage.insert
@@ -151,11 +147,11 @@ class DistributedCollection {
         // for the actual file I/O for blobs.
         const inserted = await this.local.insert(doc);
         if (this.networkID !== '') {
-            const opPayload = (0, crdt_resolver_1.ToDistributed)(inserted, this.network.getPeerID());
+            const opPayload = ToDistributed(inserted, this.network.getPeerID());
             opPayload.entryType = entryType; // Ensure EntryType is set on the distributed doc
             const op = {
                 id: `${this.network.getPeerID()}-${Date.now()}-${Math.random()}`,
-                type: types_1.OperationType.Insert,
+                type: OperationType.Insert,
                 collection: this.name,
                 documentId: id,
                 data: opPayload,
@@ -173,10 +169,10 @@ class DistributedCollection {
             const doc = await this.local.find(id);
             const op = {
                 id: `${this.network.getPeerID()}-${Date.now()}`,
-                type: types_1.OperationType.Update,
+                type: OperationType.Update,
                 collection: this.name,
                 documentId: id,
-                data: (0, crdt_resolver_1.ToDistributed)(doc, this.network.getPeerID()),
+                data: ToDistributed(doc, this.network.getPeerID()),
                 vector: this.getCurrentVector(),
                 timestamp: Date.now(),
                 peerId: this.network.getPeerID()
@@ -190,7 +186,7 @@ class DistributedCollection {
         if (this.networkID !== '' && affected > 0) {
             const op = {
                 id: `${this.network.getPeerID()}-${Date.now()}`,
-                type: types_1.OperationType.Delete,
+                type: OperationType.Delete,
                 collection: this.name,
                 documentId: id,
                 data: { id, _deleted: true },
@@ -224,9 +220,9 @@ class DistributedCollection {
         this.pruneOperationLog();
         // increment local vector
         const syncState = this.syncStates.get(this.networkID);
-        syncState.localVector = (0, vector_clock_1.increment)(syncState.localVector, this.network.getPeerID());
+        syncState.localVector = increment(syncState.localVector, this.network.getPeerID());
         this.network.broadcastMessage(this.networkID, {
-            type: types_1.MessageType.Operation,
+            type: MessageType.Operation,
             networkId: this.networkID,
             senderId: this.network.getPeerID(),
             timestamp: Date.now(),
@@ -238,9 +234,9 @@ class DistributedCollection {
         const existing = await this.local.find(op.documentId);
         let existingDist = null;
         if (existing) {
-            existingDist = (0, crdt_resolver_1.ToDistributed)(existing, op.peerId);
+            existingDist = ToDistributed(existing, op.peerId);
         }
-        const result = (0, crdt_resolver_1.ApplyOperation)(existingDist, op);
+        const result = ApplyOperation(existingDist, op);
         if (result === null) {
             // delete
             await this.local.delete(op.documentId);
@@ -250,7 +246,7 @@ class DistributedCollection {
         }
         else {
             // upsert
-            const regular = (0, crdt_resolver_1.ToRegular)(result);
+            const regular = ToRegular(result);
             if (regular) {
                 await this.local.insert(regular);
             }
@@ -258,7 +254,7 @@ class DistributedCollection {
         // merge vector
         if (this.networkID !== '') {
             const syncState = this.syncStates.get(this.networkID);
-            syncState.localVector = (0, vector_clock_1.merge)(syncState.localVector, op.vector);
+            syncState.localVector = merge(syncState.localVector, op.vector);
         }
     }
     async requestSync() {
@@ -270,7 +266,7 @@ class DistributedCollection {
             return;
         syncState.syncInProgress = true;
         await this.network.broadcastMessage(this.networkID, {
-            type: types_1.MessageType.SyncRequest,
+            type: MessageType.SyncRequest,
             networkId: this.networkID,
             senderId: this.network.getPeerID(),
             timestamp: Date.now(),
@@ -294,7 +290,7 @@ class DistributedCollection {
             }
         }
         this.network.sendToPeer(msg.senderId, this.networkID, {
-            type: types_1.MessageType.SyncResponse,
+            type: MessageType.SyncResponse,
             networkId: this.networkID,
             senderId: this.network.getPeerID(),
             timestamp: Date.now(),
@@ -325,5 +321,4 @@ class DistributedCollection {
         }
     }
 }
-exports.DistributedCollection = DistributedCollection;
 //# sourceMappingURL=distributed_collection.js.map

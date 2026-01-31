@@ -1,9 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.EncryptionManager = void 0;
-const keys_1 = require("./keys");
+import { encrypt, decrypt, sign, verify, isActive, generatePQCKeyPair } from './keys';
 // EncryptionManager manages PQC encryption for sensitive data
-class EncryptionManager {
+export class EncryptionManager {
     constructor() {
         this.keyCache = new Map();
     }
@@ -27,11 +24,11 @@ class EncryptionManager {
                 throw new Error(`key ${keyID} not found in cache`);
             }
         }
-        if (!(0, keys_1.isActive)(keyPair)) {
+        if (!isActive(keyPair)) {
             throw new Error(`key ${keyID} is not active`);
         }
         // Encrypt the data
-        const ciphertext = await (0, keys_1.encrypt)(keyPair, plaintext);
+        const ciphertext = await encrypt(keyPair, plaintext);
         // Create encrypted payload with metadata
         const payload = {
             key_id: keyID,
@@ -40,7 +37,7 @@ class EncryptionManager {
         };
         // Sign the payload for integrity
         const payloadBytes = Buffer.from(JSON.stringify(payload));
-        const signature = await (0, keys_1.sign)(keyPair, payloadBytes);
+        const signature = await sign(keyPair, payloadBytes);
         // Create final encrypted structure
         const encrypted = {
             payload,
@@ -74,16 +71,16 @@ class EncryptionManager {
                 throw new Error(`key ${keyID} not found in cache`);
             }
         }
-        if (!(0, keys_1.isActive)(keyPair)) {
+        if (!isActive(keyPair)) {
             throw new Error(`key ${keyID} is not active`);
         }
         // Verify signature
-        const isValid = await (0, keys_1.verify)(keyPair, payloadBytes, signature);
+        const isValid = await verify(keyPair, payloadBytes, signature);
         if (!isValid) {
             throw new Error('signature verification failed');
         }
         // Decrypt the data
-        return (0, keys_1.decrypt)(keyPair, ciphertext);
+        return decrypt(keyPair, ciphertext);
     }
     // CacheKey adds a key pair to the cache
     cacheKey(keyID, keyPair) {
@@ -95,10 +92,9 @@ class EncryptionManager {
     }
     // GenerateDataEncryptionKey generates a new key pair for data encryption
     generateDataEncryptionKey(name) {
-        const keyPair = (0, keys_1.generatePQCKeyPair)(name, 'encryption');
+        const keyPair = generatePQCKeyPair(name, 'encryption');
         this.cacheKey(keyPair.id, keyPair);
         return keyPair;
     }
 }
-exports.EncryptionManager = EncryptionManager;
 //# sourceMappingURL=encryption.js.map

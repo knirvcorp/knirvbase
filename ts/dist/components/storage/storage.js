@@ -1,51 +1,15 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.FileStorage = void 0;
-const fs = __importStar(require("fs"));
-const path = __importStar(require("path"));
-const index_1 = require("./index");
-const pqc_1 = require("../crypto/pqc");
-const types_1 = require("../types/types");
-class FileStorage {
+import * as fs from 'fs';
+import * as path from 'path';
+import { IndexManager } from './index';
+import { EncryptionManager } from '../crypto/pqc';
+import { EntryType } from '../types/types';
+export class FileStorage {
     constructor(baseDir) {
         this.baseDir = baseDir;
         fs.mkdirSync(baseDir, { recursive: true });
-        this.indexManager = new index_1.IndexManager(baseDir);
+        this.indexManager = new IndexManager(baseDir);
         this.indexManager.loadIndexes();
-        this.encryptionMgr = new pqc_1.EncryptionManager();
+        this.encryptionMgr = new EncryptionManager();
     }
     getCollectionDir(collection) {
         return path.join(this.baseDir, collection);
@@ -72,7 +36,7 @@ class FileStorage {
         const docPath = this.getDocPath(collection, doc.id);
         const docCopy = this.deepCopyDoc(doc);
         // Handle MEMORY blob
-        if (docCopy.entryType === types_1.EntryType.Memory) {
+        if (docCopy.entryType === EntryType.Memory) {
             const payload = docCopy.payload;
             if (payload && payload.blob !== undefined) {
                 const blobPath = this.saveBlob(collection, docCopy.id, payload.blob);
@@ -130,7 +94,7 @@ class FileStorage {
                 Object.assign(doc, decrypted);
             }
             // Load blob
-            if (doc.entryType === types_1.EntryType.Memory) {
+            if (doc.entryType === EntryType.Memory) {
                 const payload = doc.payload;
                 if (payload && payload.blobRef) {
                     const blob = this.loadBlob(payload.blobRef);
@@ -271,5 +235,4 @@ class FileStorage {
         return decrypted;
     }
 }
-exports.FileStorage = FileStorage;
 //# sourceMappingURL=storage.js.map

@@ -1,16 +1,13 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.QueryOptimizer = exports.ScanType = void 0;
-const index_1 = require("../storage/index");
+import { IndexType } from '../storage/index';
 // ScanType represents the type of scan to perform
-var ScanType;
+export var ScanType;
 (function (ScanType) {
     ScanType[ScanType["FullScan"] = 0] = "FullScan";
     ScanType[ScanType["IndexScan"] = 1] = "IndexScan";
     ScanType[ScanType["IndexOnlyScan"] = 2] = "IndexOnlyScan";
-})(ScanType || (exports.ScanType = ScanType = {}));
+})(ScanType || (ScanType = {}));
 // QueryOptimizer analyzes queries and creates optimal execution plans
-class QueryOptimizer {
+export class QueryOptimizer {
     constructor(collection, indexes, stats) {
         this.collection = collection;
         this.indexes = indexes;
@@ -34,7 +31,7 @@ class QueryOptimizer {
         const plan = {
             useIndex: false,
             indexName: '',
-            indexType: index_1.IndexType.BTree,
+            indexType: IndexType.BTree,
             scanType: ScanType.FullScan,
             filters: query.filters || [],
             limit: query.limit || 0,
@@ -129,11 +126,11 @@ class QueryOptimizer {
     // canUseIndex checks if a filter can use the given index
     canUseIndex(idx, filter) {
         switch (idx.type) {
-            case index_1.IndexType.BTree:
+            case IndexType.BTree:
                 return this.canUseBTreeIndex(idx, filter);
-            case index_1.IndexType.GIN:
+            case IndexType.GIN:
                 return this.canUseGINIndex(idx, filter);
-            case index_1.IndexType.HNSW:
+            case IndexType.HNSW:
                 return false; // Not for regular filters
             default:
                 return false;
@@ -175,13 +172,13 @@ class QueryOptimizer {
             return 0.1; // Default selectivity
         }
         // For B-Tree indexes, use cardinality
-        if (idx.type === index_1.IndexType.BTree) {
+        if (idx.type === IndexType.BTree) {
             if (stats.cardinality > 0) {
                 return 1.0 / stats.cardinality;
             }
         }
         // For GIN indexes, assume lower selectivity for text search
-        if (idx.type === index_1.IndexType.GIN) {
+        if (idx.type === IndexType.GIN) {
             return 0.01; // Very selective for text search
         }
         return stats.selectivity;
@@ -205,5 +202,4 @@ class QueryOptimizer {
         return this.stats;
     }
 }
-exports.QueryOptimizer = QueryOptimizer;
 //# sourceMappingURL=optimizer.js.map

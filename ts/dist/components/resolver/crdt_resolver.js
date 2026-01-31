@@ -1,40 +1,34 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ResolveConflict = ResolveConflict;
-exports.ApplyOperation = ApplyOperation;
-exports.ToDistributed = ToDistributed;
-exports.ToRegular = ToRegular;
-const vector_clock_1 = require("../clock/vector_clock");
-const types_1 = require("../types/types");
+import { compare, merge, clone, ComparisonResult } from '../clock/vector_clock';
+import { OperationType } from '../types/types';
 // ResolveConflict applies LWW + vector-clock tie-breaking
-function ResolveConflict(local, remote) {
+export function ResolveConflict(local, remote) {
     if (!remote)
         return local;
     if (!local)
         return remote;
     // Deletion handling
     if (remote._deleted && !local._deleted) {
-        const comp = (0, vector_clock_1.compare)(local._vector, remote._vector);
-        if (comp === vector_clock_1.ComparisonResult.Before || comp === vector_clock_1.ComparisonResult.Concurrent) {
+        const comp = compare(local._vector, remote._vector);
+        if (comp === ComparisonResult.Before || comp === ComparisonResult.Concurrent) {
             return remote;
         }
         return local;
     }
     if (local._deleted && !remote._deleted) {
-        const comp = (0, vector_clock_1.compare)(remote._vector, local._vector);
-        if (comp === vector_clock_1.ComparisonResult.Before || comp === vector_clock_1.ComparisonResult.Concurrent) {
+        const comp = compare(remote._vector, local._vector);
+        if (comp === ComparisonResult.Before || comp === ComparisonResult.Concurrent) {
             return local;
         }
         return remote;
     }
-    switch ((0, vector_clock_1.compare)(local._vector, remote._vector)) {
-        case vector_clock_1.ComparisonResult.After:
+    switch (compare(local._vector, remote._vector)) {
+        case ComparisonResult.After:
             return local;
-        case vector_clock_1.ComparisonResult.Before:
+        case ComparisonResult.Before:
             return remote;
-        case vector_clock_1.ComparisonResult.Equal:
+        case ComparisonResult.Equal:
             return local;
-        case vector_clock_1.ComparisonResult.Concurrent:
+        case ComparisonResult.Concurrent:
             // Use timestamp, then peer id for deterministic ordering
             if (local._timestamp > remote._timestamp) {
                 return mergeDocuments(local, remote);
@@ -51,7 +45,7 @@ function ResolveConflict(local, remote) {
 }
 function mergeDocuments(winner, loser) {
     const merged = { ...winner };
-    merged._vector = (0, vector_clock_1.merge)(winner._vector, loser._vector);
+    merged._vector = merge(winner._vector, loser._vector);
     // Merge non-conflicting fields from loser payload
     if (!merged.payload) {
         merged.payload = {};
@@ -64,40 +58,40 @@ function mergeDocuments(winner, loser) {
     return merged;
 }
 // ApplyOperation applies a CRDT operation to a document (insert/update/delete)
-function ApplyOperation(doc, op) {
+export function ApplyOperation(doc, op) {
     switch (op.type) {
-        case types_1.OperationType.Insert:
-        case types_1.OperationType.Update:
+        case OperationType.Insert:
+        case OperationType.Update:
             if (!doc) {
                 if (!op.data)
                     return null;
                 const copy = { ...op.data };
-                copy._vector = (0, vector_clock_1.clone)(op.vector);
+                copy._vector = clone(op.vector);
                 copy._timestamp = op.timestamp;
                 copy._peerId = op.peerId;
                 return copy;
             }
-            const comp = (0, vector_clock_1.compare)(doc._vector, op.vector);
-            if (comp === vector_clock_1.ComparisonResult.Before || comp === vector_clock_1.ComparisonResult.Concurrent) {
+            const comp = compare(doc._vector, op.vector);
+            if (comp === ComparisonResult.Before || comp === ComparisonResult.Concurrent) {
                 // Merge fields
                 if (!doc.payload)
                     doc.payload = {};
                 for (const [k, v] of Object.entries(op.data?.payload || {})) {
                     doc.payload[k] = v;
                 }
-                doc._vector = (0, vector_clock_1.merge)(doc._vector, op.vector);
+                doc._vector = merge(doc._vector, op.vector);
                 if (op.timestamp > doc._timestamp) {
                     doc._timestamp = op.timestamp;
                 }
             }
             return doc;
-        case types_1.OperationType.Delete:
+        case OperationType.Delete:
             if (!doc)
                 return null;
-            const compDel = (0, vector_clock_1.compare)(doc._vector, op.vector);
-            if (compDel === vector_clock_1.ComparisonResult.Before || compDel === vector_clock_1.ComparisonResult.Concurrent) {
+            const compDel = compare(doc._vector, op.vector);
+            if (compDel === ComparisonResult.Before || compDel === ComparisonResult.Concurrent) {
                 doc._deleted = true;
-                doc._vector = (0, vector_clock_1.merge)(doc._vector, op.vector);
+                doc._vector = merge(doc._vector, op.vector);
                 if (op.timestamp > doc._timestamp) {
                     doc._timestamp = op.timestamp;
                 }
@@ -108,7 +102,7 @@ function ApplyOperation(doc, op) {
     }
 }
 // ToDistributed converts a simple map payload to DistributedDocument
-function ToDistributed(payload, peerID) {
+export function ToDistributed(payload, peerID) {
     const v = {};
     v[peerID] = 1;
     return {
@@ -121,7 +115,7 @@ function ToDistributed(payload, peerID) {
     };
 }
 // ToRegular converts a DistributedDocument to a regular map representation
-function ToRegular(doc) {
+export function ToRegular(doc) {
     if (!doc)
         return null;
     return cloneMap(doc.payload) || null;
